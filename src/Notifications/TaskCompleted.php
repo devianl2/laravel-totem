@@ -92,7 +92,7 @@ class TaskCompleted extends Notification implements ShouldQueue
                 if ($this->output === TaskConstant::SUCCESS) {
                     $attachment
                         ->title('Totem Task: '. $notifiable->description)
-                        ->content(':white_check_mark: '. TaskConstant::SUCCESS_MESSAGE);
+                        ->content(':white_check_mark: Task executed successfully');
                 } else {
                     $attachment
                         ->title('Totem Task: '. $notifiable->description)

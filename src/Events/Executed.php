@@ -33,7 +33,7 @@ class Executed extends BroadcastingEvent
                 break;
 
             case TaskConstant::FAILED:
-                if ($output == TaskConstant::FAILED) {
+                if ($output != TaskConstant::SUCCESS) {
                     $task->notify(new TaskCompleted($output));
                 }
                 break;
