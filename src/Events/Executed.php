@@ -2,6 +2,7 @@
 
 namespace Studio\Totem\Events;
 
+use Studio\Totem\Constants\TaskConstant;
 use Studio\Totem\Notifications\TaskCompleted;
 use Studio\Totem\Task;
 
@@ -24,7 +25,24 @@ class Executed extends BroadcastingEvent
             'result'    => $output,
         ]);
 
-        $task->notify(new TaskCompleted($output));
+        switch (config('totem.notification_type')) {
+            case TaskConstant::SUCCESS:
+                if ($output == TaskConstant::SUCCESS) {
+                    $task->notify(new TaskCompleted($output));
+                }
+                break;
+
+            case TaskConstant::FAILED:
+                if ($output == TaskConstant::FAILED) {
+                    $task->notify(new TaskCompleted($output));
+                }
+                break;
+
+            default:
+                $task->notify(new TaskCompleted($output));
+                break;
+        }
+
         $task->autoCleanup();
     }
 }

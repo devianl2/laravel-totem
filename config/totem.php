@@ -234,4 +234,5 @@ return [
         'enabled' => env('TOTEM_BROADCASTING_ENABLED', true),
         'channel' => env('TOTEM_BROADCASTING_CHANNEL', 'task.events'),
     ],
+    'notification_type' => env('TOTEM_NOTIFICATION_TYPE', 'all'), // notification type: failed, success, all (Based on TaskConstant class)
 ];

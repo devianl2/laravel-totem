@@ -9,6 +9,7 @@ use Illuminate\Notifications\Messages\NexmoMessage;
 use Illuminate\Notifications\Messages\SlackAttachment;
 use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
+use Studio\Totem\Constants\TaskConstant;
 
 class TaskCompleted extends Notification implements ShouldQueue
 {
@@ -87,9 +88,16 @@ class TaskCompleted extends Notification implements ShouldQueue
         return (new SlackMessage)
             ->content(config('app.name'))
             ->attachment(function (SlackAttachment $attachment) use ($notifiable) {
-                $attachment
-                    ->title('Totem Task')
-                    ->content($notifiable->description.' just finished running.');
+
+                if ($this->output === TaskConstant::SUCCESS) {
+                    $attachment
+                        ->title('Totem Task: '. $notifiable->description)
+                        ->content(':white_check_mark: '. TaskConstant::SUCCESS_MESSAGE);
+                } else {
+                    $attachment
+                        ->title('Totem Task: '. $notifiable->description)
+                        ->content(':x: '. $this->output);
+                }
             });
     }
 }
