@@ -9,6 +9,7 @@ use Illuminate\Notifications\Messages\NexmoMessage;
 use Illuminate\Notifications\Messages\SlackAttachment;
 use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
+use Studio\Totem\CleanOutput;
 use Studio\Totem\Constants\TaskConstant;
 
 class TaskCompleted extends Notification implements ShouldQueue
@@ -51,6 +52,20 @@ class TaskCompleted extends Notification implements ShouldQueue
     }
 
     /**
+     * Determine which queues should be used for each notification channel.
+     *
+     * @return array
+     */
+    public function viaQueues()
+    {
+        return [
+            'mail' => 'totem-mail-queue',
+            'nexmo' => 'totem-nexmo-queue',
+            'slack' => 'totem-slack-queue',
+        ];
+    }
+
+    /**
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
@@ -89,7 +104,7 @@ class TaskCompleted extends Notification implements ShouldQueue
             ->content(config('app.name'))
             ->attachment(function (SlackAttachment $attachment) use ($notifiable) {
 
-                if ($this->cleanOutput($this->output) == TaskConstant::SUCCESS) {
+                if (CleanOutput::cleanOutput($this->output) == TaskConstant::SUCCESS) {
                     $attachment
                         ->title('Totem Task: '. $notifiable->description)
                         ->content(':white_check_mark: Task executed successfully');
@@ -99,22 +114,5 @@ class TaskCompleted extends Notification implements ShouldQueue
                         ->content(':x: '. $this->output);
                 }
             });
-    }
-
-    /**
-     * Clean unwanted string and lines.
-     *
-     * @param  string  $output
-     * @return string
-     */
-    protected function cleanOutput($output)
-    {
-        // Remove unwanted characters (example: removing extra newlines and spaces)
-        $cleanedOutput = trim($output); // Trim leading and trailing spaces
-        $cleanedOutput = preg_replace('/\s+/', ' ', $cleanedOutput); // Replace multiple spaces with a single space
-
-        // You can add more cleaning logic here if needed
-
-        return $cleanedOutput;
     }
 }
